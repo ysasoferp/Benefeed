@@ -1,0 +1,15 @@
+/node_modules
+/storage/*.key
+/ecoupon/vendor/*
+/ecoupon/.env
+/ecoupon/.env.backup
+/ecoupon/.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+
+/.idea
+/public/*.js
+/ecoupon/storage/debugbar/
+/ecoupon/composer.lock

@@ -1,0 +1,36 @@
+.withdrawlFilter .form-control{
+	margin-left: 10px;
+    display: inline-block;
+    width: 60%;
+}
+.datesubmit{margin-top:7px;}
+.editcustModel h4{font-size:18px;margin-right: 10px;display:inline-block;}
+.statuslabel{margin-right: 10px;}
+/* Tooltip container */
+.Areatip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+.Areatip .Areatiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  margin:5px;
+  border-radius: 6px;
+ 
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 10;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.Areatip:hover .Areatiptext {
+  visibility: visible;
+}
+
