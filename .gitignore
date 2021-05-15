@@ -12,4 +12,5 @@ yarn-error.log
 /.idea
 /public/*.js
 /ecoupon/storage/debugbar/
+/ecoupon/storage/laravel-excel
 /ecoupon/composer.lock
