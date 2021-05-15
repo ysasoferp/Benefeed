@@ -33,8 +33,8 @@
               <!-- form start -->
               <form>
                 <div class="card-body">
-                  
-                 
+
+
                   <div class="row">
                     <div class="col-sm-6">
                       <!-- select -->
@@ -42,14 +42,14 @@
                         <label>Filter by Status</label>
                         <select class="form-control filter" id="filter_coupon">
                               @php
-                        
+
                         $filter = "";
                         $request_area="";
                         $request_store="" ;
                         if(isset($_REQUEST['status'])){
                         $filter = $_REQUEST['status'];
                         }
-                        
+
                         if(isset($_REQUEST['area'])){
                         $request_area = $_REQUEST['area'];
                         }
@@ -110,25 +110,25 @@
                       <!-- Export Withdraw Data -->
                       <button class="btn btn-primary" style="margin-top:32px;" id="exportData" >Export</button>
                     </div>
-               
+
                   </div>
-                 
+
                 </div>
                 <!-- /.card-body -->
 
-               
+
               </form>
             </div>
             <!-- /.card -->
 
             <!-- Form Element sizes -->
-           
 
-           
-                     
+
+
+
 
           </div>
-          
+
         </div>
         <!-- /.row -->
       </div><!-- /.container-fluid -->
@@ -138,9 +138,9 @@
      <section class="content">
 		<div class="container-fluid">
 			<div class="row">
-        
+
 			<div class="col-md-12">
-          
+
           <!-- /.card -->
           <div class="card card-info">
             <div class="card-header">
@@ -152,7 +152,7 @@
           <span class="alert alert-success ml-4">{{session('msg')}}</span>
           @endif
                               </a>
-           
+
             </div>
             <div class="card-body p-0">
               <table class="table">
@@ -182,7 +182,7 @@
                     <td>{{$ecoupon->redeem}}</td>
                     <td>{{@$ecoupon->customer->location->name}}</td>
                     <td>
-                        
+
                         @if( strtolower($ecoupon->status) == "scanned")
                     	 <a class="btn btn-danger btn-sm" href="javascript:void(0);" style="cursor:context-menu;"  >
                               <i class="fas fa-trash-alt">
@@ -195,18 +195,18 @@
                               </i>
                               Delete
                           </a>
-                         
+
                         @endif
-                          
+
         <form id="delete-user-{{$ecoupon->id}}" action="{{ route('deleteCoupon', $ecoupon->id ) }}" method="POST" style="display: none;">
         @csrf
       </form></td>
 				  </tr>
-				  
-		     @endif	  
+
+		     @endif
 			 @elseif(isset($_REQUEST['area']))
              @if(@$ecoupon->customer->location->id == $_REQUEST['area'] )
-              
+
 			 <tr>
                     <td>{{$ecoupon->coupon_code}}</td>
                     <td>{{$ecoupon->amount}}</td>
@@ -228,16 +228,16 @@
                               </i>
                               Delete
                           </a>
-                         
+
                         @endif
         <form id="delete-user-{{$ecoupon->id}}" action="{{ route('deleteCoupon', $ecoupon->id ) }}" method="POST" style="display: none;">
         @csrf
       </form></td>
 				  </tr>
-		 @endif		  
+		 @endif
 		 @elseif(isset($_REQUEST['store']))
          @if(@$ecoupon->customer->store->id == $_REQUEST['store'] )
-               
+
 			 <tr>
                     <td>{{$ecoupon->coupon_code}}</td>
                     <td>{{$ecoupon->amount}}</td>
@@ -259,16 +259,16 @@
                               </i>
                               Delete
                           </a>
-                         
+
                         @endif
         <form id="delete-user-{{$ecoupon->id}}" action="{{ route('deleteCoupon', $ecoupon->id ) }}" method="POST" style="display: none;">
         @csrf
       </form></td>
-				  </tr>	
+				  </tr>
 		    @endif
 		    @else
 		    	 <tr>
-		    	
+
                     <td>{{$ecoupon->coupon_code}}</td>
                     <td>{{$ecoupon->amount}}</td>
                     <td>{{@$ecoupon->customer->fname}} {{@$ecoupon->customer->lname}}</td>
@@ -289,18 +289,20 @@
                               </i>
                               Delete
                           </a>
-                         
+
                         @endif
         <form id="delete-user-{{$ecoupon->id}}" action="{{ route('deleteCoupon', $ecoupon->id ) }}" method="POST" style="display: none;">
         @csrf
       </form></td>
-				  </tr>	
+				  </tr>
 		    @endif
 			@endforeach
 			@endif
                 </tbody>
               </table>
-           {{   $coupon->links()}}
+                @if($coupon->count() > 0)
+                    {{   $coupon->appends(Request::only(['status','store','area']))->links()}}
+                @endif
             </div>
             <!-- /.card-body -->
           </div>
@@ -326,16 +328,16 @@
 
 @section('script')
 <script type="text/javascript">
-  setTimeout(function(){ 
-       
+  setTimeout(function(){
+
        $('.alert').fadeOut('slow');
-       
-   }, 3000); 
-     
-    
-    
-    
-    
+
+   }, 3000);
+
+
+
+
+
 
 
 function confirmDelete(id){
@@ -344,15 +346,15 @@ function confirmDelete(id){
       document.getElementById('delete-user-'+id).submit();
     }
   }
-  
+
   $('.filter').change(function(){
-      
+
       var status=$('#filter_coupon :selected').val();
       var area=$('#filter_coupon_area :selected').val();
       var store=$('#filter_coupon_store :selected').val();
-      
-        
-     
+
+
+
      if(status != "" && area != "" && store != ""){
       window.open(`{{url('coupon/couponlist')}}?status=${status}&store=${store}&area=${area}`, "_self");
      }else if(status != "" && area != "" ){
@@ -370,27 +372,27 @@ function confirmDelete(id){
      }else{
           window.open("{{url('coupon/couponlist')}}" , "_self");
      }
-     
+
   });
-  
-  
+
+
   $('#exportData').click(function(e){
-      
+
       e.preventDefault();
-      
-     
-      
+
+
+
          var from = $('.from').val();
       var to = $('.to').val();
       var area=$('#filter_coupon :selected').val();
-  
-     
+
+
          window.open("{{url('ExportCoupon?filter=')}}"+area, "_self");
-     
-      
-      
+
+
+
   });
-  
+
 </script>
 
 @endsection

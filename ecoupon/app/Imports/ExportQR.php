@@ -8,35 +8,37 @@ class ExportQR  implements FromCollection,WithHeadings,WithMapping
 {
     /**
     * @return \Illuminate\Support\Collection
-    */  
+    */
     // use Exportable;
     protected $type ;
-    
-    
-           
-    function __construct($type) {
+    protected $status ;
+
+
+
+    function __construct($type,$status) {
         $this->type = $type;
-        
+        $this->status = $status;
+
  }
-    
+
     public function collection()
     {
-        
-        if($this->type !== null){
-            return Customer::where('location_id', $this->type)->with("store", "location")->orderby("id", "desc")->get();
-        }else{
-            return Customer::with("store", "location")->orderby("id", "desc")->get();
-        }
-                    
-        
-        
+        $filter = $this->type;
+        $status = $this->status;
+        $customersQuery = Customer::when($this->type,function($q) use ($filter) {
+            $q->where( 'location_id','=',$filter);
+        })->when($this->status !== null, function($q) use ($status) {
+            $q->where( 'status','=',$status);
+        });
+
+        return $customersQuery->with("store", "location")->orderby("id", "desc")->get();
     }
-    
-     
+
+
     public function headings(): array
     {
         return [
-            
+
             'uID',
             'Email',
             'First Name',
@@ -49,14 +51,14 @@ class ExportQR  implements FromCollection,WithHeadings,WithMapping
             'Wallet',
             'Created_at',
             'Updated_at',
-              
+
             ];
     }
-    
+
      public function map($customer): array
     {
         return [
-            
+
               $customer->uID,
               $customer->email,
               $customer->fname,
@@ -71,8 +73,8 @@ class ExportQR  implements FromCollection,WithHeadings,WithMapping
               $customer->Updated_at,
         ];
     }
-    
-    
-    
-   
+
+
+
+
 }

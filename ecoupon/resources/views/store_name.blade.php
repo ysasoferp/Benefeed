@@ -155,7 +155,11 @@
                   @endif
 		      </tbody>
           </table>
+
         </div>
+          <div class="card-footer">
+              {{$stores->links()}}
+          </div>
         <!-- /.card-body -->
       </div>
       <!-- /.card -->

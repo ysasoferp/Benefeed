@@ -27,14 +27,25 @@ class CustomerController extends Controller
         $page = Page::first();
         $location = Location::all();
         $stores = Store::all();
-        if(isset($request->filter)){
-        $customers = Customer::where("Pro_Status", 1)->where('location_id', $request->filter)->paginate(10);
-        return view('customers', compact('customers', 'location', 'page', 'store'));
-        }else{
-        $customers = Customer::where("Pro_Status", 1)->paginate(10);
-        return view('customers', compact('customers', 'location', 'page', 'stores'));
-        }
-       
+
+        $filter = $request->filter;
+        $status = $request->status;
+        $customersQuery = Customer::when($filter,function($q) use ($filter) {
+            $q->where( 'location_id','=',$filter);
+        })->when($request->status !== null, function($q) use ($status) {
+            $q->where( 'status','=',$status);
+        });
+//        if(isset($request->filter)){
+//        $customers = Customer::where("Pro_Status", 1)->where('location_id', $request->filter)->paginate(10);
+//        return view('customers', compact('customers', 'location', 'page', 'stores'));
+//        }else{
+//        $customers = Customer::where("Pro_Status", 1)->paginate(10);
+//        return view('customers', compact('customers', 'location', 'page', 'stores'));
+//        }
+
+        $customers = $customersQuery->paginate(10);
+        return view('customers', compact('customers', 'location', 'page', 'stores','filter','status'));
+
     }
 
 
@@ -44,14 +55,17 @@ class CustomerController extends Controller
   function ExportQR(Request $request)
     {
         $filter = null ;
-        
+        $status   = null;
        if(isset($request->filter)){
-           
-           $filter = $request->filter; 
-       } 
-       return Excel::download(new ExportQR($filter) , 'CustomerQR.xls');
-       
-    } 
+           $filter = $request->filter;
+       }
+
+        if(isset($request->status)){
+            $status = $request->status;
+        }
+       return Excel::download(new ExportQR($filter, $status) , 'CustomerQR.xls');
+
+    }
 
 
 
@@ -64,8 +78,8 @@ class CustomerController extends Controller
     public function getProfileData($id)
     {
       $customers = Customer::findOrFail($id);
-      
-      
+
+
       $response["email"] = $customers->email;
        $response["fname"] = $customers->fname;
         $response["lname"] = $customers->lname;
@@ -73,11 +87,11 @@ class CustomerController extends Controller
           $response["phone"] = $customers->phone;
            $response["dp"] = $customers->dp ? url($customers->dp) :201;
            $response["identity"] = url($customers->identity);
-      
-      
+
+
        echo json_encode($response);
-       
-        
+
+
     }
 
 
@@ -97,9 +111,9 @@ class CustomerController extends Controller
 
 
  public function registerUser( Request $request){
-       
-    
-         
+
+
+
         $request->validate([
         'firstname' => ['required'],
         'lastname' => ['required'],
@@ -108,7 +122,7 @@ class CustomerController extends Controller
         'role'=>['required'],
         'password'=>['required'],
         'password_confirmation' => 'required|same:password'
-       
+
               ]);
 
 
@@ -120,19 +134,19 @@ class CustomerController extends Controller
             $user->email = $request->email;
            $user->password =Hash::make($request->password);
            $user->save();
-       
+
         {
-            
+
     return back()->with('sumsg' , 'User Created Successfully' );
-    
+
 
         }
-        
+
 
 
 }
 
-  
+
 
 
 
@@ -146,24 +160,24 @@ class CustomerController extends Controller
   public function UpdateUser($id)
     {
         $users= User::findOrFail($id);
-        
+
         return response()->json([
-            
+
             'uname'=>$users->uname,
              'fname'=>$users->fname,
               'lname'=>$users->lname,
                'email'=>$users->email,
                'id'=>$users->id
             ]);
-            
+
     }
 
 
   public function postUpdateUser(Request $requeset)
     {
-      
+
         $users= User::findOrFail($requeset->id);
-        
+
         $users->uname = $requeset->uname;
         $users->email = $requeset->email;
         $users->lname = $requeset->firstname ;
@@ -171,16 +185,16 @@ class CustomerController extends Controller
         if(isset($requeset->password)){
         $users->password = Hash::make($requeset->password);
         }
-        
+
    if($users->save()){
-       
+
           return back()->with('msg' , 'User Updated Successfully' );
-    
+
    }
 
 
-        
-        
+
+
     }
 
 
@@ -194,15 +208,15 @@ class CustomerController extends Controller
      */
     public function register(Request $request)
     {
-        
-            // Response Array variable 
-        
+
+            // Response Array variable
+
                    $response['response']        = null   ;  //Check Response fail or Success Blank
                    $response['email']           = null   ;  //Get Email Blank
                    $response['user_id']         = null   ;  //Get User Id Blank
-            
+
         if(!Customer::where("email", $request->email)->exists()){
-     
+
         $customer               = new Customer();
         $customer->email        = $request->email;
         $customer->status       = 0;
@@ -212,17 +226,17 @@ class CustomerController extends Controller
         $customer->password     =  md5($request->password);
         if($customer->save())
         {
-            
-                   $response['response']        = 200                                       ;  //Check Response fail or Success 
-                   $response['email']           = $customer->email                          ;  //Get Email 
-                   $response['user_id']         = $customer->id                             ;  //Get User Id 
-                   $response['amount']          = $customer->wallet                         ;  //Get Wallet Amount 
-            
+
+                   $response['response']        = 200                                       ;  //Check Response fail or Success
+                   $response['email']           = $customer->email                          ;  //Get Email
+                   $response['user_id']         = $customer->id                             ;  //Get User Id
+                   $response['amount']          = $customer->wallet                         ;  //Get Wallet Amount
+
     echo json_encode($response);
         }
         else{
 
-        
+
         }
         }else{
    $response['response']=301;
@@ -245,15 +259,15 @@ class CustomerController extends Controller
      */
     public function registerLogin(Request $request)
     {
-        
-            // Response Array variable 
-        
+
+            // Response Array variable
+
                    $response['response']        = null   ;  //Check Response fail or Success Blank
                    $response['email']           = null   ;  //Get Email Blank
                    $response['user_id']         = null   ;  //Get User Id Blank
-            
+
         if(!Customer::where("email", $request->email)->exists()){
-     
+
         $customer                        = new Customer();
         $customer->email                 = $request->email;
         $customer->status                = 0;
@@ -263,28 +277,28 @@ class CustomerController extends Controller
         $customer->wallet                = 0.00;
         if($customer->save())
         {
-    
- 
-                   $response['response']        = 200                                       ;  //Check Response fail or Success 
-                   $response['email']           = $customer->email                          ;  //Get Email 
-                   $response['user_id']         = $customer->id                             ;  //Get User Id 
-                   $response['amount']          = $customer->wallet                         ;  //Get Wallet Amount 
-            
+
+
+                   $response['response']        = 200                                       ;  //Check Response fail or Success
+                   $response['email']           = $customer->email                          ;  //Get Email
+                   $response['user_id']         = $customer->id                             ;  //Get User Id
+                   $response['amount']          = $customer->wallet                         ;  //Get Wallet Amount
+
     echo json_encode($response);
         }
         else{
 
-        
+
         }
         }else{
-            
+
                 $customer=  Customer::where("email", $request->email)->first();
-  
-                   $response['response']        = 200                                       ;  //Check Response fail or Success 
-                   $response['email']           = $customer->email                          ;  //Get Email 
-                   $response['user_id']         = $customer->id                             ;  //Get User Id 
-                   $response['amount']          = $customer->wallet                         ;  //Get Wallet Amount 
-            
+
+                   $response['response']        = 200                                       ;  //Check Response fail or Success
+                   $response['email']           = $customer->email                          ;  //Get Email
+                   $response['user_id']         = $customer->id                             ;  //Get User Id
+                   $response['amount']          = $customer->wallet                         ;  //Get Wallet Amount
+
   echo json_encode($response);
         }
         }
@@ -301,12 +315,12 @@ public function resetPass($expire)
         $customer = Customer::where('resetPass' , $expire)->first();
         if($customer != null){
      return view('auth.passwords.reset', compact('customer'));
-    
+
     }else{
-        
+
         return "this link is expired";
     }
-    
+
 }
 
 
@@ -319,14 +333,14 @@ public function resetPassApp(Request $request)
     $customer->password = md5($request->password);
     $customer->resetPass = null;
     if($customer->save()){
-        
+
         return "Password Reset Successfully";
     }
     }else{
-        
+
         return "this link is expired";
     }
-    
+
 }else{
     return back()->with('error', "Confirm Password not Match");
 }
@@ -352,10 +366,10 @@ $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
         if($customer != null){
             if($customer->Login_type != 0){
         $time= time();
-        
+
         $expire = Crypt::encryptString($time);
         $msg ="Hello! ".$customer->fname." Click the link for reset your Password".url('resetPass/'.$expire);
-        
+
        if(mail($email,$subject,$msg,$headers)){
         $customer->resetpass = $expire;
             $customer->save();
@@ -364,7 +378,7 @@ $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
        echo json_encode($response);
         }
             }else{
-                
+
     $response['result']=301;
    $response['msg']='Please Login With Google Account';
    echo json_encode($response);
@@ -375,24 +389,24 @@ $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
    echo json_encode($response);
         }
     }
-    
-    
+
+
 
 
 
   public function changePassword(Request $request)
     {
-        
+
      $pass = md5($request->password);
      $passNew = md5($request->passwordNew);
-            // Response Array variable 
-        
+            // Response Array variable
+
     $response['response']        = null   ;  //Check Response fail or Success Blank
-                
+
         $customer = Customer::findOrFail($request->user_id);
         if($customer != null){
-            
-          if($pass == $customer->password ) { 
+
+          if($pass == $customer->password ) {
             $customer->password  = $passNew;
             $customer->save();
         $response['response']=200;
@@ -401,17 +415,17 @@ $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
    $response['response']=201;
    echo json_encode($response);
         }
-        
+
     }
     }
-    
-    
+
+
     public function loginUser(Request $request)
     {
-        
-        
-            // Response Array variable 
-        
+
+
+            // Response Array variable
+
                    $response['response']        = null   ;  //Check Response fail or Success Blank
                    $response['email']           = null   ;  //Get Email Blank
                    $response['user_id']         = null   ;  //Get User Id Blank
@@ -426,38 +440,38 @@ $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
                    $response['Pro_Status']      = null   ;  //Get Profile Status Blank
                    $location                    = null   ;  //Make Location Null
                    $response['dp']              = null   ;  //Get Image Null
-        
-        
-    
+
+
+
     $password = md5($request->password);
     $customer = Customer::where('email', $request->email)->first();
-    
-   
+
+
     if(isset($customer->location->name)){
         $location = $customer->location->name;
     }
-    
-    
- 
+
+
+
    if(!$customer == null){
      if($password == $customer->password){
-         
-                   $response['response']        = 200                                       ;  //Check Response fail or Success 
-                   $response['email']           = $customer->email                          ;  //Get Email 
-                   $response['user_id']         = $customer->id                             ;  //Get User Id 
-                   $response['amount']          = $customer->wallet                         ;  //Get Wallet Amount 
-                   $response['fullName']        = $customer->fname." ".$customer->lname     ;  //Get Full Name 
-                   $response['fName']           = $customer->fname                          ;  //Get First Name 
-                   $response['lName']           = $customer->lname                          ;  //Get Last Name 
-                   $response['location']        = $location                                 ;  //Get Location 
-                   $response['phone']           = $customer->phone                          ;  //Get Status 
-                   $response['status']          = $customer->status                         ;  //Get Status 
+
+                   $response['response']        = 200                                       ;  //Check Response fail or Success
+                   $response['email']           = $customer->email                          ;  //Get Email
+                   $response['user_id']         = $customer->id                             ;  //Get User Id
+                   $response['amount']          = $customer->wallet                         ;  //Get Wallet Amount
+                   $response['fullName']        = $customer->fname." ".$customer->lname     ;  //Get Full Name
+                   $response['fName']           = $customer->fname                          ;  //Get First Name
+                   $response['lName']           = $customer->lname                          ;  //Get Last Name
+                   $response['location']        = $location                                 ;  //Get Location
+                   $response['phone']           = $customer->phone                          ;  //Get Status
+                   $response['status']          = $customer->status                         ;  //Get Status
                    $response['dp']              = url($customer->dp)                    ; //GET IMAGE
                    $response['Login_type']      = $customer->Login_type                     ;
                    $response['Pro_Status']      = $customer->Pro_Status                     ;
-        
+
    echo json_encode($response);
-   
+
      }else{
    $response['response']=201;
    $response['email']=$request->email;
@@ -467,9 +481,9 @@ $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
    $response['response']=301;
    $response['email']=$request->email;
    echo json_encode($response);
-        
+
     }
-    
+
     }
 
 
@@ -483,10 +497,10 @@ $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
      */
     public function getUserData($id)
     {
-        
-        
-            // Response Array variable 
-        
+
+
+            // Response Array variable
+
                    $response['response']        = null   ;  //Check Response fail or Success Blank
                    $response['email']           = null   ;  //Get Email Blank
                    $response['user_id']         = null   ;  //Get User Id Blank
@@ -501,37 +515,37 @@ $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
                    $response['dp']              = null   ; //GET IMAGE Null
                    $response['Login_type']      = null   ;  //Get Login Status Blank
                    $response['Pro_Status']      = null   ;  //Get Profile Status Blank
-    
+
 
     $customer = Customer::where('id', $id)->first();
-   
+
     if(isset($customer->location->name)){
         $location = $customer->location->name;
     }
-    
-    
- 
+
+
+
    if(!$customer == null){
-                   $response['response']        = 200                                       ;  //Check Response fail or Success 
-                   $response['email']           = $customer->email                          ;  //Get Email 
-                   $response['user_id']         = $customer->id                             ;  //Get User Id 
-                   $response['amount']          = $customer->wallet                         ;  //Get Wallet Amount 
-                   $response['fullName']        = $customer->fname." ".$customer->lname     ;  //Get Full Name 
-                   $response['fName']           = $customer->fname                          ;  //Get First Name 
-                   $response['lName']           = $customer->lname                          ;  //Get Last Name 
-                   $response['location']        = $location                                 ;  //Get Location 
-                   $response['phone']           = $customer->phone                          ;  //Get Status 
-                   $response['status']          = $customer->status                         ;  //Get Status 
+                   $response['response']        = 200                                       ;  //Check Response fail or Success
+                   $response['email']           = $customer->email                          ;  //Get Email
+                   $response['user_id']         = $customer->id                             ;  //Get User Id
+                   $response['amount']          = $customer->wallet                         ;  //Get Wallet Amount
+                   $response['fullName']        = $customer->fname." ".$customer->lname     ;  //Get Full Name
+                   $response['fName']           = $customer->fname                          ;  //Get First Name
+                   $response['lName']           = $customer->lname                          ;  //Get Last Name
+                   $response['location']        = $location                                 ;  //Get Location
+                   $response['phone']           = $customer->phone                          ;  //Get Status
+                   $response['status']          = $customer->status                         ;  //Get Status
                    $response['dp']              = url($customer->dp)                    ; //GET IMAGE
                    $response['Login_type']      = $customer->Login_type                     ;
                    $response['Pro_Status']      = $customer->Pro_Status                     ;
    echo json_encode($response);
-   
+
      }
-        
-        
-        
-        
+
+
+
+
     }
 
     /**
@@ -542,11 +556,11 @@ $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
      */
     public function getLocation()
     {
-        
+
       $location = Location::all();
       foreach($location as $key => $loc){
         $data[]=$loc->name;
-      }  
+      }
         echo json_encode($data);
     }
 
@@ -556,23 +570,23 @@ $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
-     * 
+     *
      */
-     
-     
-     
+
+
+
     public function uploadProfileData(Request $request)
     {
-        
+
         $customer = Customer::findOrFail($request->user_id);
-        
+
         $identitylocation = $customer->identity;
-       
-       
+
+
        if($customer->dp ==null){
-           
+
          if (isset($request->upload)) {
-              
+
       $image =base64_decode($request->upload);
       $filename = $request->fName.rand().".jpg";
       $path =file_put_contents('uploads/images/Profile/'.$filename, $image );
@@ -581,31 +595,31 @@ $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
           $filelocation= 'uploads/images/profile_image.png';
       }
        }else{
-           
+
                if (isset($request->upload)) {
-              
+
       $image =base64_decode($request->upload);
       $filename = $request->fName.rand().".jpg";
       $path =file_put_contents('uploads/images/Profile/'.$filename, $image );
       $filelocation = 'uploads/images/Profile/'.$filename;
       }else{
           $filelocation= $customer->dp;
-      } 
-           
+      }
+
        }
-    
+
       if (isset($request->identity)) {
-              
+
       $identity =base64_decode($request->identity);
       $filenameIdentity = $request->fName.rand().".jpg";
       $path =file_put_contents('uploads/images/Identity/'.$filenameIdentity, $identity );
       $identitylocation = 'uploads/images/Identity/'.$filenameIdentity;
       }
-      
-      
-    
+
+
+
       $location = Location::where("name", $request->Location)->first();
-    
+
       $customer->identity = $identitylocation;
       $customer->fname = $request->fName;
       $customer->lname = $request->lName;
@@ -613,18 +627,18 @@ $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
       $customer->Pro_Status = 1;
       $customer->location_id = $location->id;
       $customer->dp = $filelocation;
-    
+
       $customer->save();
-      
+
       $response['ProStatus'] = $customer->Pro_Status;
       $response['fname'] = $customer->fname;
       $response['lname'] = $customer->lname;
       $response['phone'] = $request->pNumber;
       $response['location'] = $request->Location;
-      
-      
+
+
       echo json_encode($response);
-      
+
     }
 
     /**
@@ -641,8 +655,8 @@ $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
         }else{
             return back()->with('msgError','Error Deleting Record');
         }
-        
-        
+
+
     }
         public function deleteCustom($id)
     {
@@ -652,32 +666,32 @@ $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
         }else{
             return back()->with('msgError','Error Deleting Record');
         }
-        
-        
+
+
     }
-    
+
             public function editCustom($id)
     {
            $customer = Customer::findOrFail($id);
-       
+
          return response()->json($customer);
         }
-        
+
              public function activateCustom(Request $request)
     {
            $customer = Customer::findOrFail($request->id);
            $customer->status = $request->status;
            $customer->store_id= $request->storeName;
           if( $customer->save()){
-              
+
               return back();
-              
+
           }
-      
+
         }
-        
-    
-    
-    
-    
+
+
+
+
+
 }

@@ -29,10 +29,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        
+
         $tcoupon = Coupon::whereMonth('redeem', '=', date('m'))->get();
         $location = Location::all();
-       $costumer= Customer::where("Pro_Status",1)->orderby('id', 'DESC')->get();
+       $costumer= Customer::where("Pro_Status",1)->orderby('id', 'DESC')->limit(10)->get();
         return view('index', compact('costumer', 'location','tcoupon'));
     }
      public function privacy()
@@ -40,14 +40,14 @@ class HomeController extends Controller
         $privacy = Page::first();
                return view('privacy',compact('privacy'));
     }
-    
+
     public function Adminlogin(Request $request){
-        
+
         $user = User:: where('email', $request->email)->first();
         if($user != null){
-            
+
             if(Hash::check($request->password, $user->password)){
-                
+
                 auth()->login($user);
                 return redirect()->to('home');
             }

@@ -21,6 +21,13 @@
     <!-- /.content-header -->
 	<section class="content">
       <div class="container-fluid">
+          <div class="row">
+              <div class="col-md-6" role="alert">
+                  <div class="alert alert-success  alert-dismissible">
+                      Import Successful
+                  </div>
+              </div>
+          </div>
         <div class="row">
           <!-- left column -->
           <div class="col-md-6">
@@ -36,15 +43,15 @@
                 <div class="card-body">
                    <div class="form-group">
                     <label for="exampleInputFile">File input</label>
-                    
+
 					<div class="input-group">
 							<div class="custom-file">
 							<input type="file" class="form-control mb-2"  name="upload_file">
-					
+
 						</div>
 					</div>
                   </div>
-                 
+
                 </div>
                 <!-- /.card-body -->
 
@@ -56,24 +63,25 @@
             <!-- /.card -->
 
             <!-- Form Element sizes -->
-           
 
-           
+
+
 
           </div>
-          
+
         </div>
         <!-- /.row -->
       </div><!-- /.container-fluid -->
     </section>
+
     <!-- /.content -->
     <!-- Main content -->
      <section class="content">
 		<div class="container-fluid">
 			<div class="row">
-        
+
 			<div class="col-md-12">
-          
+
           <!-- /.card -->
           <div class="card card-info">
             <div class="card-header">
@@ -85,8 +93,8 @@
           <span class="alert alert-success ml-4">{{session('msg')}}</span>
           @endif
                               </a>
-       
-              
+
+
             </div>
             <div class="card-body p-0">
               <table class="table">
@@ -108,20 +116,20 @@
                     <td class="text-right py-0 align-middle">
                       <div class="btn-group btn-group-sm">
                         <a href="javascript:;" onclick="confirmDelete('{{$ecoupon->id}}')" class="btn btn-danger"><i class="fas fa-trash"></i></a>
-                        
+
                         <form id="delete-user-{{$ecoupon->id}}" action="{{ route('deleteCoupon', $ecoupon->id ) }}" method="POST" style="display: none;">
         @csrf
-      </form>  
+      </form>
                       </div>
                     </td>
 				  </tr>
-				  
+
 @endforeach
 @else
    <tr colspen>
-        
+
         <td colspan="2"> Record not Found!  </td>
-             
+
    </tr>
 @endif
 
@@ -141,7 +149,7 @@
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
- 
+
 
   <!-- Control Sidebar -->
   <aside class="control-sidebar control-sidebar-dark">
@@ -157,16 +165,16 @@
 
 @section('script')
 <script type="text/javascript">
-  setTimeout(function(){ 
-       
+  setTimeout(function(){
+
        $('.alert').fadeOut('slow');
-       
-   }, 3000); 
-     
-    
-    
-    
-    
+
+   }, 3000);
+
+
+
+
+
 
 
 function confirmDelete(id){
@@ -175,8 +183,8 @@ function confirmDelete(id){
       document.getElementById('delete-user-'+id).submit();
     }
   }
-  
-  
+
+
 </script>
 
 @endsection

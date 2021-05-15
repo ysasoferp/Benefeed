@@ -15,9 +15,9 @@ class StoreController extends Controller
     public function index()
     {
       $page = Page::first();
-         $stores= Store::all();
+         $stores= Store::paginate(50);
          return view('store_name', compact('stores', 'page'));
-        
+
         }
 
     /**
@@ -38,15 +38,15 @@ class StoreController extends Controller
      */
     public function store(Request $request)
     {
-        
-     
+
+
       $store = new Store();
       $store->name= $request->store;
       $store->total_coupon= 0;
       $store->save();
-    
+
       return back()->with('sumsg' , 'Store Created Successfully' );
-    
+
     }
 
     /**

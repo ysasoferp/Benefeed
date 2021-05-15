@@ -31,80 +31,59 @@
               </div>
               <!-- /.card-header -->
               <!-- form start -->
-              <form>
-                <div class="card-body">
-                  
-                
-                  <div class="row">
-					<div class="col-sm-4">
-                      <!-- select -->
-                      <div class="form-group withdrawlFilter">
-                        <label>Filter by: Area</label>
-                        <select class="form-control" id="filter_area">
-                        <option value="">Select Area</option>
-                        
-                        @php
-                        
-                        $filter = "";
-                        if(isset($_REQUEST['filter'])){
-                        $filter = $_REQUEST['filter'];
-                        }
-                        
-                        @endphp
-                        
-                          @if(isset($location))
-                            
-                         @foreach($location as $loc )
-                         @if($filter == $loc->id)
-                         <option value="{{$loc->id}}" selected>{{$loc->name}}</option>
-                         @else
-                          <option value="{{$loc->id}}">{{$loc->name}}</option>
-                         @endif
-                         @endforeach
-                         @endif
-                        </select>
-                               <div class="col-sm-6 m-4">
-                      <!-- Export Withdraw Data -->
-                      <button class="btn btn-primary" id="exportData" >Export</button>
-            </div>
-                      </div>
-                 
-                    </div>
-					<!--<div class="col-sm-4">-->
-     <!--                 <div class="form-group">-->
-						
-     <!--                   <div class="input-group input-group-md">-->
-					<!--	<input type="text" class="form-control">-->
-					<!--		<span class="input-group-append">-->
-					<!--			<button type="button" class="btn btn-info btn-flat">Go!</button>-->
-					<!--		</span>-->
-					<!--	</div>-->
-     <!--                 </div>-->
-     <!--               </div>-->
-					<!--<div class="col-sm-4">-->
-     <!--                 <div class="form-group">-->
-						
-     <!--                   <a href="invoice-print.html" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>-->
-     <!--                 </div>-->
-     <!--               </div>-->
-                    
-                    
-                  </div>
-                 
-                </div>
-                <!-- /.card-body -->
 
-               
-              </form>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="withdrawlFilter">
+                                <form class="form-inline">
+                                <!-- select -->
+                                    <label for="filter_area">Filter by: Area</label>
+                                    <select class="form-control mr-2" id="filter_area" style="width:250px;">
+                                        <option value="">Select Area</option>
+                                        @php
+
+                                            $filter = "";
+                                            if(isset($_REQUEST['filter'])){
+                                            $filter = $_REQUEST['filter'];
+                                            }
+
+                                        @endphp
+
+                                        @if(isset($location))
+
+                                            @foreach($location as $loc )
+                                                @if($filter == $loc->id)
+                                                    <option value="{{$loc->id}}" selected>{{$loc->name}}</option>
+                                                @else
+                                                    <option value="{{$loc->id}}">{{$loc->name}}</option>
+                                                @endif
+                                            @endforeach
+                                        @endif
+                                    </select>
+
+                                    <label for="status">Status</label>
+                                    <select name="status" class="form-control mr-3" id="status"  style="width:250px;">
+                                        <option value="" {{ $status =="" ?"selected" : "" }}>All</option>
+                                        <option value="1" {{ $status ==1 ?"selected" : "" }}>Approved</option>
+                                        <option value="3" {{ $status ==3 ?"selected" : "" }}>Disapproved</option>
+                                        <option value="4" {{ $status ==4 ?"selected" : "" }}>Lock Profile</option>
+                                        <option value="5" {{ $status ==5 ?"selected" : "" }}>Unlock Profile</option>
+                                    </select>
+                                <button class="btn btn-primary" id="exportData">Export</button>
+                                </form>
+                </div>
+                        </div>
+                <!-- /.card-body -->
             </div>
             <!-- /.card -->
 
             <!-- Form Element sizes -->
-           
 
-          
+
+
           </div>
-          
+
         </div>
         <!-- /.row -->
       </div><!-- /.container-fluid -->
@@ -114,9 +93,9 @@
      <section class="content">
 		<div class="container-fluid">
 			<div class="row">
-        
+
 			<div class="col-md-12">
-          
+
           <!-- /.card -->
           <div class="card card-info">
             <div class="card-header">
@@ -141,7 +120,7 @@
 					<th>Wallet</th>
 					<th>Status</th>
 					<th>Action</th>
-                    
+
                   </tr>
                 </thead>
                 <tbody>
@@ -163,7 +142,7 @@
 				    <td class="text-danger">Disapproved</td>
 					@endif
 					<td class="project-actions">
-                          
+
                          <a class="btn btn-info btn-sm" href="javascript:;" onclick="confirmEdit('{{$custm->id}}')">
                               <i class="fas fa-pencil-alt">
                               </i>
@@ -177,9 +156,9 @@
         <form id="delete-user-{{$custm->id}}" action="{{ route('deleteCustom', $custm->id ) }}" method="POST" style="display: none;">
         @csrf
       </form>
-                      </td>                    
+                      </td>
 				  </tr>
-				  
+
 @endforeach
 @endif
 	        </tbody>
@@ -191,7 +170,7 @@
         </div>
       </div>
 	  <div class="row">
-          
+
           <div class="col-md-12">
             <div class="card">
               <div class="card-header">
@@ -201,7 +180,7 @@
                   </ul>
                 </div>
               </div>
-             
+
               <!-- /.card-body -->
             </div>
             <!-- /.card -->
@@ -214,7 +193,7 @@
 <!-- Modal -->
 <div class="modal fade" id="CustomerModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
-    
+
     <div class="modal-content ">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLongTitle">Edit Customer </h5>
@@ -225,48 +204,48 @@
       <form action="{{route('activateCustom')}}" method="post">
           @csrf
       <div class="modal-body editcustModel">
-            
-      <img src=""  id="identityImage" class="img-thumbnail p-3"  style="max-height:200px"/> 
+
+      <img src=""  id="identityImage" class="img-thumbnail p-3"  style="max-height:200px"/>
       <div><h4> First Name: </h4><span id="F_name" ></span></div>
       <div><h4> Last Name: </h4><span id="L_name" ></span></div>
       <div><h4> Email: </h4><span id="Email" ></span></div>
       <div><h4> Phone Number: </h4><span id="Phone_number" ></span></div>
-   
-   
+
+
      <div><label class="statuslabel">Status</label>
-     
+
      <select name="status">
          <option value="1" >Approved</option>
          <option value="3">Disapproved</option>
          <option value="4" >Lock Profile</option>
          <option value="5" >Unlock Profile</option>
      </select></div>
-     
-     
+
+
       <div><label class="statuslabel">Store Name</label>
-     
+
      <select name="storeName" id="storeName">
          @if(isset($stores))
          @foreach($stores as $store )
-         
+
          <option value="{{$store->id}}" >{{$store->name}}</option>
         @endforeach
         @endif
      </select></div>
-     
-     
+
+
      <input type="hidden" id="idGet" name="id" />
 
-    
+
       </div>
       <div class="modal-footer">
         <a class="btn btn-secondary" data-dismiss="modal">Close</a>
         <input type="submit" class="btn btn-primary" value="Save changes">
-         
+
       </div>
-      </form>   
+      </form>
     </div>
-   
+
   </div>
 </div>
 
@@ -276,7 +255,7 @@
 
 
 
-           
+
           </div>
           <!-- /.col -->
         </div>
@@ -298,67 +277,62 @@
 @endsection
 
 @section('script')
-<script type="text/javascript">
-  setTimeout(function(){ 
-       
-       $('.alert').fadeOut('slow');
-       
-   }, 3000); 
-     
-    
-    
-    
-    
+    <script type="text/javascript">
+        setTimeout(function () {
+
+            $('.alert').fadeOut('slow');
+
+        }, 3000);
 
 
-function confirmDelete(id){
-    let choice = confirm("Are You sure, You want to Delete this User ?")
-    if(choice){
-      document.getElementById('delete-user-'+id).submit();
-    }
-  }
-  
-  function confirmEdit(id){
-   $.get("{{url('custom/edit/')}}/"+id, function(data, status){
-       
-    $('#idGet').val(data.id);
-   $('#F_name').text(data.fname);
-   $('#L_name').text(data.lname);
-   $('#Email').text(data.email);
-   $('#identityImage').attr("src", data.identity);
-   $('#Phone_number').text(data.phone);
-   $('#ModelEdit').click(); 
+        function confirmDelete(id) {
+            let choice = confirm("Are You sure, You want to Delete this User ?")
+            if (choice) {
+                document.getElementById('delete-user-' + id).submit();
+            }
+        }
 
-    
-  });
-  
-  }
-  
-  
-  $('#filter_area').change(function(){
-      
-      var area=$('#filter_area :selected').val();
-       if(area != ""){
-         window.open("{{url('customers?filter=')}}"+area, "_self");
-     }else{
-         
-          window.open("{{url('customers')}}", "_self");
-     }
-      
-      
-  });
-  
-  
-    $('#exportData').click(function(e){
-      
-      e.preventDefault();
-         var area=$('#filter_area :selected').val();
-         window.open(`{{url('ExportQR')}}?filter=${area}`);
-      
-  });
-  
-  
-</script>
+        function confirmEdit(id) {
+            $.get("{{url('custom/edit/')}}/" + id, function (data, status) {
+
+                $('#idGet').val(data.id);
+                $('#F_name').text(data.fname);
+                $('#L_name').text(data.lname);
+                $('#Email').text(data.email);
+                $('#identityImage').attr("src", data.identity);
+                $('#Phone_number').text(data.phone);
+                $('#ModelEdit').click();
+
+
+            });
+
+        }
+
+
+        $('#filter_area,#status').change(function () {
+
+            var area = $('#filter_area :selected').val();
+            var status = $('#status :selected').val();
+            if (area != "" || status != "") {
+                window.open("{{url('customers?filter=')}}" + area +"&status="+status, "_self");
+            } else {
+
+                window.open("{{url('customers')}}", "_self");
+            }
+        });
+
+
+        $('#exportData').click(function (e) {
+
+            e.preventDefault();
+            var area = $('#filter_area :selected').val();
+            var status = $('#status :selected').val();
+            window.open(`{{url('ExportQR')}}?filter=${area}&status=${status}`);
+
+        });
+
+
+    </script>
 
 @endsection
 

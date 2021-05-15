@@ -25,7 +25,7 @@ class CouponController extends Controller
            $coupon = Coupon::paginate(15);
        $page = Page::first();
         return view('importcoupon', compact('coupon', 'page'));
-        
+
     }
 
     /**
@@ -38,12 +38,12 @@ class CouponController extends Controller
         $page       = Page::first();
         $storeName  = Store::all();
         $areas      = Location::all();
-        
+
         if(isset($request->status)  && $request->status !== "all" ){
          $coupon = Coupon::where('status', $request->status )->paginate(15);
          return view('couponlist', compact('coupon', 'storeName', 'areas', 'page'));
         }else{
-      
+
         $coupon = Coupon::paginate(15);
          return view('couponlist', compact('coupon', 'storeName', 'areas', 'page'));
         }
@@ -57,34 +57,34 @@ class CouponController extends Controller
      */
     public function importCouponStore(Request $request)
     {
-        
+
         $request->validate([
             'upload_file'=> 'required|mimes:xls,xlsx'
             ]
             );
-        
+
          Excel::import(new CouponImport, $request->upload_file);
-         
-         return redirect('coupon/import');
+
+         return redirect('coupon/import')->with('msg','Import Successful');
 
     }
-        
-        
-    
-         
+
+
+
+
      function ExportCoupon(Request $request)
     {
         $type = null;
-        
+
         if(isset($request->filter)){
             $type = $request->filter;
         }
-        
+
         return Excel::download(new CouponExport($type), 'coupon.xls');
-       
-    }   
-         
-        
+
+    }
+
+
 
     /**
      * Display the specified resource.
@@ -94,36 +94,36 @@ class CouponController extends Controller
      */
     public function couponVerify(Request $request)
     {
-        
+
         $couponCode = $request->coupon;
         $id = $request->id;
         $customer = Customer::findOrFail($id);
         $wallet =  $customer->wallet;
-        
-        $coupon = Coupon::where('coupon_code',$couponCode )->first(); 
+
+        $coupon = Coupon::where('coupon_code',$couponCode )->first();
         if(!$coupon == null){
-            
+
           if($coupon->status == 'valid'){
-               
-          $couponPrice =  $coupon->amount;  
+
+          $couponPrice =  $coupon->amount;
           $customer->wallet=  $wallet+ $couponPrice;
           if( $customer->location->total_coupon != null){
-              
+
               $customer->location->total_coupon = $customer->location->total_coupon + 1;
                $customer->location->save();
           }else{
               $customer->location->total_coupon =1;
               $customer->location->save();
           }
-          
+
          if($customer->save()){
-             
+
              $coupon->customer_id = $id;
              $coupon->status = "scanned";
               $coupon->redeem = date("Y-m-d");
-             
+
             if($coupon->save()){
-                
+
                 $transaction = new Transection();
                 $transaction->txn_no            =   "COUP-".time();
                 $transaction->customer_id       =   $id;
@@ -132,7 +132,7 @@ class CouponController extends Controller
                 $transaction->txn_type          =   3;
                 $transaction->txn_status        =   0;
                 if($transaction->save()){
-                    
+
                      $response['response']=200;
                      $response['amount']=$couponPrice;
                      $response['TxnNumber']=$transaction->txn_no;
@@ -141,10 +141,10 @@ class CouponController extends Controller
                      echo  $customer->location->total_coupon ;
                 }
             }
-             
+
          }
 
- 
+
   }else{
   $response['response']=201;
   $response['amount']=null;
@@ -158,7 +158,7 @@ class CouponController extends Controller
   $response['TxnNumber']=null;
   $response['total_amount']= null;
     echo json_encode($response);
-        
+
     }
     }
 
@@ -195,7 +195,7 @@ class CouponController extends Controller
     {
         //
     }
-    
+
   public function deleteCoupon($id)
     {
            $user = Coupon::findOrFail($id);
@@ -204,14 +204,14 @@ class CouponController extends Controller
         }else{
             return back()->with('msgError','Error Deleting Record');
         }
-        
-        
-    }   
-    
-    
-    
-    
-    
-    
-    
+
+
+    }
+
+
+
+
+
+
+
 }
