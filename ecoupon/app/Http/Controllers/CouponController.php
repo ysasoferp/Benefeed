@@ -35,18 +35,29 @@ class CouponController extends Controller
      */
     public function showCoupon(Request $request)
     {
-        $page       = Page::first();
-        $storeName  = Store::all();
-        $areas      = Location::all();
+        $page = Page::first();
+        $storeName = Store::all();
+        $areas =
+            Location::all();
 
-        if(isset($request->status)  && $request->status !== "all" ){
-         $coupon = Coupon::where('status', $request->status )->paginate(15);
-         return view('couponlist', compact('coupon', 'storeName', 'areas', 'page'));
-        }else{
+        $status = $request->status;
+        $storeId = $request->store;
+        $locationId = $request->area;
+        $coupon = Coupon::with(['customer.location','customer.store'])
+            ->when(isset($status) && $request->status !== "all", function($q) use ($status) {
+                $q->where( 'status', $status);
+            })->when(($storeId || $locationId), function($q) use ($storeId, $locationId){
+                $q->whereHas('customer',function($qr) use ($storeId, $locationId) {
+                    if($storeId) {
+                        $qr->where('store_id',$storeId);
+                    }
+                    if($locationId) {
+                        $qr->where('location_id',$locationId);
+                    }
+                });
+            })->paginate(15);
 
-        $coupon = Coupon::paginate(15);
-         return view('couponlist', compact('coupon', 'storeName', 'areas', 'page'));
-        }
+        return view('couponlist', compact('coupon', 'storeName', 'areas', 'page'));
     }
 
     /**

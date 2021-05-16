@@ -6,16 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Customer extends Model
 {
-    
-    protected $guarded =[];
-    
-    
-        public function location()
+
+    protected $guarded = [];
+
+
+    public function location()
     {
-    return  $this->belongsTo('App\Location');
+        return $this->belongsTo('App\Location');
     }
-        public function store()
+    public function store()
     {
-    return  $this->belongsTo('App\Store');
+        return $this->belongsTo('App\Store');
     }
 }
