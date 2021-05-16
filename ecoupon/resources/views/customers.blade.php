@@ -176,7 +176,7 @@
               <div class="card-header">
                 <div class="card-tools">
                   <ul class="pagination pagination-sm float-left">
-                  {{$customers->links()}}
+                  {{$customers->appends(Request::only(['filter','status']))->links()}}
                   </ul>
                 </div>
               </div>

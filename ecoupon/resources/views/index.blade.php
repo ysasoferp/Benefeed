@@ -8,8 +8,8 @@
       function drawChart() {
 
         var data = google.visualization.arrayToDataTable([
-            
-            
+
+
             ['Product Name', 'Quantity'],
 
                 @php
@@ -17,7 +17,7 @@
                     echo "['".$loc->name."', ".$loc->total_coupon."],";
                 }
                 @endphp
-         
+
         ]);
 
         var options = {
@@ -61,10 +61,10 @@
             <div class="small-box bg-info">
               <div class="inner">
                 <h3>
-                   @if(isset($costumer)) 
-                   
-                   {{count($costumer)}}
-                    
+                   @if(isset($totalCustomers))
+
+                   {{$totalCustomers}}
+
                     @endif
                 </h3>
 
@@ -73,7 +73,7 @@
               <div class="icon">
                 <i class="ion ion-person-add"></i>
               </div>
-              
+
             </div>
           </div>
           <!-- ./col -->
@@ -88,12 +88,12 @@
               <div class="icon">
                 <i class="ion ion-stats-bars"></i>
               </div>
-              
+
             </div>
           </div>
           <!-- ./col -->
-          
-         
+
+
         </div>
         <!-- /.row -->
         <!-- Main row -->
@@ -131,9 +131,9 @@
           <!--      </div>-->
           <!--    </div><!-- /.card-body -->
           <!--  </div>-->
-            <!-- /.card -->          
+            <!-- /.card -->
 
-           
+
           <!--</section>-->
           <!-- /.Left col -->
           <!-- right col (We are only adding the ID to make the widgets sortable)-->
@@ -158,7 +158,7 @@
                 <!-- /.card-tools -->
               </div>
               <div class="card-body">
-               
+
           <div id="piechart" class="col-lg-12" style="height:400px"></div>
                 </div>
               <!-- /.card-body-->
@@ -171,14 +171,14 @@
       <!-- Default box -->
       <div class="card">
         <div class="card-header">
-   
-          <h3 class="card-title">RECENT CUSTOMER REGISTERED</h3>         
+
+          <h3 class="card-title">RECENT CUSTOMER REGISTERED</h3>
         </div>
         <div class="card-body p-0">
           <table class="table table-striped projects">
               <thead>
                   <tr>
-                      
+
                       <th style="width: 18%">
                           Name
                       </th>
@@ -191,16 +191,16 @@
 					  <th style="width: 18%">
                          Location
                       </th>
-                      
+
                       <th style="width: 28%" class="text-center">
-						 Settings	
+						 Settings
                       </th>
                   </tr>
               </thead>
               <tbody>
-                  
-                  @if(isset($costumer))
-                  @foreach($costumer as $key => $costm)
+
+                  @if(isset($recentCustomer))
+                  @foreach($recentCustomer as $key => $costm)
                   @if($key < 11)
                   <tr>
                       <td>
@@ -236,9 +236,9 @@
                               Location
                           </small>
                       </td>
-                      
+
                   <td class="project-actions">
-                          
+
                          <a class="btn btn-info btn-sm" href="javascript:;" onclick="confirmEdit('{{$costm->id}}')">
                               <i class="fas fa-pencil-alt">
                               </i>
@@ -252,7 +252,7 @@
         <form id="delete-user-{{$costm->id}}" action="{{ route('deleteCustom', $costm->id ) }}" method="POST" style="display: none;">
         @csrf
       </form>
-                      </td>  
+                      </td>
                   </tr>
                   @endif
                   @endforeach
@@ -273,7 +273,7 @@
 <!-- Modal -->
 <div class="modal fade" id="CustomerModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
-    
+
     <div class="modal-content ">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLongTitle">Edit Customer </h5>
@@ -284,35 +284,35 @@
       <form action="{{route('activateCustom')}}" method="post">
           @csrf
       <div class="modal-body editcustModel">
-            
-      <img src=""  id="identityImage" class="img-thumbnail p-3"  style="max-height:200px"/> 
+
+      <img src=""  id="identityImage" class="img-thumbnail p-3"  style="max-height:200px"/>
       <div><h4> First Name: </h4><span id="F_name" ></span></div>
       <div><h4> Last Name: </h4><span id="L_name" ></span></div>
       <div><h4> Email: </h4><span id="Email" ></span></div>
       <div><h4> Phone Number: </h4><span id="Phone_number" ></span></div>
-   
-   
+
+
      <div><label class="statuslabel">Status</label>
-     
+
      <select name="status">
          <option value="1" >Approved</option>
          <option value="3">Disapproved</option>
          <option value="4" >Lock Profile</option>
          <option value="5" >Unlock Profile</option>
      </select></div>
-     
+
      <input type="hidden" id="idGet" name="id" />
 
-    
+
       </div>
       <div class="modal-footer">
         <a class="btn btn-secondary" data-dismiss="modal">Close</a>
         <input type="submit" class="btn btn-primary" value="Save changes">
-         
+
       </div>
-      </form>   
+      </form>
     </div>
-   
+
   </div>
 </div>
 
@@ -345,30 +345,30 @@
 @section('script')
 
 <script>
-    
+
     function confirmDelete(id){
     let choice = confirm("Are You sure, You want to Delete this User ?")
     if(choice){
       document.getElementById('delete-user-'+id).submit();
     }
   }
-  
+
   function confirmEdit(id){
    $.get("{{url('custom/edit/')}}/"+id, function(data, status){
-       
+
     $('#idGet').val(data.id);
    $('#F_name').text(data.fname);
    $('#L_name').text(data.lname);
    $('#Email').text(data.email);
    $('#identityImage').attr("src", data.identity);
    $('#Phone_number').text(data.phone);
-   $('#ModelEdit').click(); 
+   $('#ModelEdit').click();
 
-    
+
   });
-  
+
   }
-  
+
 </script>
 
 @endsection

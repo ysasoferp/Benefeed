@@ -32,8 +32,9 @@ class HomeController extends Controller
 
         $tcoupon = Coupon::whereMonth('redeem', '=', date('m'))->get();
         $location = Location::all();
-       $costumer= Customer::where("Pro_Status",1)->orderby('id', 'DESC')->limit(10)->get();
-        return view('index', compact('costumer', 'location','tcoupon'));
+       $totalCustomers= Customer::where("Pro_Status",1)->count();
+       $recentCustomer= Customer::with('location')->where("Pro_Status",1)->orderby('id', 'DESC')->limit(10)->get();
+        return view('index', compact('recentCustomer','totalCustomers', 'location','tcoupon'));
     }
      public function privacy()
     {
