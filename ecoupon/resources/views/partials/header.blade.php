@@ -26,6 +26,8 @@
   <!-- summernote -->
   <link rel="stylesheet" href="{{asset('plugins/summernote/summernote-bs4.min.css')}}">
    <link rel="stylesheet" href="{{asset('css/style.css')}}">
+
+    @stack('css')
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
@@ -37,14 +39,14 @@
       <li class="nav-item">
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
-      
+
     </ul>
 
     <!-- SEARCH FORM -->
-    
+
 
     <!-- Right navbar links -->
-    
+
   </nav>
   <!-- /.navbar -->
 
@@ -60,11 +62,11 @@
     <div class="sidebar">
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-       
+
         <div class="info">
           <a href="#" style="text-align: center;font-weight: bold; font-size:22px;
     text-transform: capitalize;color: #3389c8;" class="d-block font-weigth-bold">{{Auth::user()->fname}}</a> <br/>
-          
+
              <a class="btn btn-link font-weight-bold text-decoration-none" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
@@ -99,18 +101,18 @@
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
                 Dashboard
-                
+
               </p>
-            </a>            
+            </a>
           </li>
                <li class="nav-item">
             <a href="{{route('appInfo')}}" class="nav-link  @if(strtolower(Request::segment(1)) == 'appinfo')  active @endif">
               <i class="nav-icon fas fa-info-circle"></i>
               <p>
                 App Info
-                
+
               </p>
-            </a>            
+            </a>
           </li>
 		  <li class="nav-item">
             <a href="#" class="nav-link  @if(strtolower(Request::segment(1)) == 'coupon')  active @endif ">
@@ -133,7 +135,7 @@
                   <p>Coupon List</p>
                 </a>
               </li>
-              
+
             </ul>
           </li>
          <li class="nav-item">
@@ -141,99 +143,99 @@
               <i class="nav-icon fas fa-chart-pie"></i>
               <p>
                 Withdraw List
-                
+
               </p>
             </a>
-            
+
           </li>
           <li class="nav-item">
             <a href="{{route('marketing')}}" class="nav-link  @if(strtolower(Request::segment(1)) == 'marketing')  active @endif">
               <i class="nav-icon fas fa-chart-pie"></i>
               <p>
                 MARKETING
-                
+
               </p>
             </a>
-            
+
           </li>
-          
+
           <li class="nav-item">
             <a href="{{route('customers')}}" class="nav-link  @if(strtolower(Request::segment(1)) == 'customers')  active @endif">
               <i class="nav-icon fas fa-edit"></i>
               <p>
                 CUSTOMERS
-                
+
               </p>
             </a>
-            
+
           </li>
 		  <li class="nav-item">
             <a href="{{route('location')}}" class="nav-link  @if(strtolower(Request::segment(1)) == 'location')  active @endif">
               <i class="nav-icon fas fa-edit"></i>
               <p>
                 LOCATION / AREA
-                
+
               </p>
             </a>
-            
+
           </li>
            <li class="nav-item">
             <a href="{{route('storeName')}}" class="nav-link  @if(strtolower(Request::segment(1)) == 'store-name')  active @endif">
               <i class="nav-icon fas fa-edit"></i>
               <p>
                 Store Name
-                
+
               </p>
             </a>
-            
+
           </li>
-          
-          
+
+
           <!--<li class="nav-item">-->
           <!--  <a href="location.html" class="nav-link">-->
           <!--    <i class="nav-icon fas fa-table"></i>-->
           <!--    <p>-->
           <!--      LOCATION-->
-               
+
           <!--    </p>-->
           <!--  </a>-->
-            
+
           <!--</li>-->
-          
-          
+
+
           <li class="nav-item">
             <a href="{{route('users')}}" class="nav-link  @if(strtolower(Request::segment(1)) == 'users')  active @endif">
               <i class="nav-icon far fa-plus-square"></i>
               <p>
                 USERS
-                
+
               </p>
             </a>
-            
+
           </li>
-          
+
              <li class="nav-item">
             <a href="{{route('pages')}}" class="nav-link  @if(strtolower(Request::segment(1)) == 'pages')  active @endif">
               <i class="nav-icon far fa-plus-square"></i>
               <p>
                 ADD PAGES
-                
+
               </p>
             </a>
-            
+
           </li>
-          
+
           <li class="nav-item">
             <a href="{{route('settings')}}" class="nav-link  @if(strtolower(Request::segment(1)) == 'settings')  active @endif">
               <i class="nav-icon far fa-plus-square"></i>
               <p>
                 SETTINGS
-                
+
               </p>
             </a>
-            
+
           </li>
-          
+
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

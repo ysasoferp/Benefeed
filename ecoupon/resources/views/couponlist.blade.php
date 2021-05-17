@@ -40,7 +40,7 @@
                       <!-- select -->
                       <div class="form-group">
                         <label>Filter by Status</label>
-                        <select class="form-control filter" id="filter_coupon">
+                        <select class="form-control filter" id="filter_coupon"  required>
                               @php
 
                         $filter = "";
@@ -105,6 +105,21 @@
                          @endif
                         </select>
                       </div>
+                        <div class="form-group">
+                            <label>Filter by Scanned Date</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="">From</span>
+                                </div>
+                                <input type="text" name="scannedFrom" class="form-control filter" id="scanned-from" value="{{ Request::get('scannedFrom') }}"  required />
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="">To</span>
+                                </div>
+                                <input type="text" name="scannedTo" class="form-control filter" id="scanned-to" value="{{ Request::get('scannedTo') }}"  required/>
+                            </div>
+
+
+                        </div>
                     </div>
 					<div class="col-sm-6">
                       <!-- Export Withdraw Data -->
@@ -170,133 +185,37 @@
                 </thead>
                 <tbody>
                @if(isset($coupon))
-               @foreach($coupon as $ecoupon)
-               @if(isset($_REQUEST['area']) && isset($_REQUEST['store']) )
-               @if(@$ecoupon->customer->location->id == $_REQUEST['area'] && @$ecoupon->customer->store->id == $_REQUEST['store'] )
-                  <tr>
-                    <td>{{$ecoupon->coupon_code}}</td>
-                    <td>{{$ecoupon->amount}}</td>
-                    <td>{{@$ecoupon->customer->fname}} {{@$ecoupon->customer->lname}}</td>
-                    <td>{{@$ecoupon->customer->store->name}}</td>
-                    <td>{{$ecoupon->status}}</td>
-                    <td>{{$ecoupon->redeem}}</td>
-                    <td>{{@$ecoupon->customer->location->name}}</td>
-                    <td>
+                   @foreach($coupon as $ecoupon)
+                       <tr>
+                           <td>{{$ecoupon->coupon_code}}</td>
+                           <td>{{$ecoupon->amount}}</td>
+                           <td>{{@$ecoupon->customer->fname}} {{@$ecoupon->customer->lname}}</td>
+                           <td>{{@$ecoupon->customer->store->name}}</td>
+                           <td>{{$ecoupon->status}}</td>
+                           <td>{{$ecoupon->redeem}}</td>
+                           <td>{{@$ecoupon->customer->location->name}}</td>
+                           <td>
 
-                        @if( strtolower($ecoupon->status) == "scanned")
-                    	 <a class="btn btn-danger btn-sm" href="javascript:void(0);" style="cursor:context-menu;"  >
-                              <i class="fas fa-trash-alt">
-                              </i>
-                              Delete
-                          </a>
-                        @else
-                        <a class="btn btn-danger btn-sm" href="javascript:;" onclick="confirmDelete('{{$ecoupon->id}}')">
-                              <i class="fas fa-trash-alt">
-                              </i>
-                              Delete
-                          </a>
+                               @if( strtolower($ecoupon->status) == "scanned")
+                                   <a class="btn btn-danger btn-sm" href="javascript:void(0);" style="cursor:context-menu;"  >
+                                       <i class="fas fa-trash-alt">
+                                       </i>
+                                       Delete
+                                   </a>
+                               @else
+                                   <a class="btn btn-danger btn-sm" href="javascript:;" onclick="confirmDelete('{{$ecoupon->id}}')">
+                                       <i class="fas fa-trash-alt">
+                                       </i>
+                                       Delete
+                                   </a>
 
-                        @endif
+                               @endif
 
-        <form id="delete-user-{{$ecoupon->id}}" action="{{ route('deleteCoupon', $ecoupon->id ) }}" method="POST" style="display: none;">
-        @csrf
-      </form></td>
-				  </tr>
-
-		     @endif
-			 @elseif(isset($_REQUEST['area']))
-             @if(@$ecoupon->customer->location->id == $_REQUEST['area'] )
-
-			 <tr>
-                    <td>{{$ecoupon->coupon_code}}</td>
-                    <td>{{$ecoupon->amount}}</td>
-                    <td>{{@$ecoupon->customer->fname}} {{@$ecoupon->customer->lname}}</td>
-                    <td>{{@$ecoupon->customer->store->name}}</td>
-                    <td>{{$ecoupon->status}}</td>
-                    <td>{{$ecoupon->redeem}}</td>
-                    <td>{{@$ecoupon->customer->location->name}}</td>
-                    <td>
-                    	        @if( strtolower($ecoupon->status) == "scanned")
-                    	 <a class="btn btn-danger btn-sm" href="javascript:void(0);" style="cursor:context-menu;"  >
-                              <i class="fas fa-trash-alt">
-                              </i>
-                              Delete
-                          </a>
-                        @else
-                        <a class="btn btn-danger btn-sm" href="javascript:;" onclick="confirmDelete('{{$ecoupon->id}}')">
-                              <i class="fas fa-trash-alt">
-                              </i>
-                              Delete
-                          </a>
-
-                        @endif
-        <form id="delete-user-{{$ecoupon->id}}" action="{{ route('deleteCoupon', $ecoupon->id ) }}" method="POST" style="display: none;">
-        @csrf
-      </form></td>
-				  </tr>
-		 @endif
-		 @elseif(isset($_REQUEST['store']))
-         @if(@$ecoupon->customer->store->id == $_REQUEST['store'] )
-
-			 <tr>
-                    <td>{{$ecoupon->coupon_code}}</td>
-                    <td>{{$ecoupon->amount}}</td>
-                    <td>{{@$ecoupon->customer->fname}} {{@$ecoupon->customer->lname}}</td>
-                    <td>{{@$ecoupon->customer->store->name}}</td>
-                    <td>{{$ecoupon->status}}</td>
-                    <td>{{$ecoupon->redeem}}</td>
-                    <td>{{@$ecoupon->customer->location->name}}</td>
-                    <td>
-                    	        @if( strtolower($ecoupon->status) == "scanned")
-                    	 <a class="btn btn-danger btn-sm" href="javascript:void(0);" style="cursor:context-menu;"  >
-                              <i class="fas fa-trash-alt">
-                              </i>
-                              Delete
-                          </a>
-                        @else
-                        <a class="btn btn-danger btn-sm" href="javascript:;" onclick="confirmDelete('{{$ecoupon->id}}')">
-                              <i class="fas fa-trash-alt">
-                              </i>
-                              Delete
-                          </a>
-
-                        @endif
-        <form id="delete-user-{{$ecoupon->id}}" action="{{ route('deleteCoupon', $ecoupon->id ) }}" method="POST" style="display: none;">
-        @csrf
-      </form></td>
-				  </tr>
-		    @endif
-		    @else
-		    	 <tr>
-
-                    <td>{{$ecoupon->coupon_code}}</td>
-                    <td>{{$ecoupon->amount}}</td>
-                    <td>{{@$ecoupon->customer->fname}} {{@$ecoupon->customer->lname}}</td>
-                    <td>{{@$ecoupon->customer->store->name}}</td>
-                    <td>{{$ecoupon->status}}</td>
-                    <td>{{$ecoupon->redeem}}</td>
-                    <td>{{@$ecoupon->customer->location->name}}</td>
-                    <td>
-                    	        @if( strtolower($ecoupon->status) == "scanned")
-                    	 <a class="btn btn-danger btn-sm" href="javascript:void(0);" style="cursor:context-menu;" >
-                              <i class="fas fa-trash-alt">
-                              </i>
-                              Delete
-                          </a>
-                        @else
-                        <a class="btn btn-danger btn-sm" href="javascript:;" onclick="confirmDelete('{{$ecoupon->id}}')">
-                              <i class="fas fa-trash-alt">
-                              </i>
-                              Delete
-                          </a>
-
-                        @endif
-        <form id="delete-user-{{$ecoupon->id}}" action="{{ route('deleteCoupon', $ecoupon->id ) }}" method="POST" style="display: none;">
-        @csrf
-      </form></td>
-				  </tr>
-		    @endif
-			@endforeach
+                               <form id="delete-user-{{$ecoupon->id}}" action="{{ route('deleteCoupon', $ecoupon->id ) }}" method="POST" style="display: none;">
+                                   @csrf
+                               </form></td>
+                       </tr>
+                   @endforeach
 			@endif
                 </tbody>
               </table>
@@ -326,6 +245,10 @@
 
 
 
+@push('css')
+    <link rel="stylesheet" href="{{ asset('css/jquery-ui.css') }}" />
+@endpush
+
 @section('script')
 <script type="text/javascript">
   setTimeout(function(){
@@ -349,29 +272,24 @@ function confirmDelete(id){
 
   $('.filter').change(function(){
 
-      var status=$('#filter_coupon :selected').val();
-      var area=$('#filter_coupon_area :selected').val();
-      var store=$('#filter_coupon_store :selected').val();
+      var filters = {
+          status: $('#filter_coupon :selected').val(),
+          area: $('#filter_coupon_area :selected').val(),
+          store: $('#filter_coupon_store :selected').val(),
+          scannedFrom: $('#scanned-from').val(),
+          scannedTo: $('#scanned-to').val()
+      }
 
+      var filterArray =[],urlParams = "";
 
+      Object.keys(filters).forEach(function(key) {
+          console.log(key, filters[key]);
+          filterArray.push(key +'=' + filters[key]);
+      });
 
-     if(status != "" && area != "" && store != ""){
-      window.open(`{{url('coupon/couponlist')}}?status=${status}&store=${store}&area=${area}`, "_self");
-     }else if(status != "" && area != "" ){
-      window.open(`{{url('coupon/couponlist')}}?status=${status}&area=${area}`, "_self");
-     }else if(status != "" && store != ""){
-      window.open(`{{url('coupon/couponlist')}}?status=${status}&store=${store}`, "_self");
-     }else if(area != "" && store != ""){
-      window.open(`{{url('coupon/couponlist')}}?area=${area}&store=${store}`, "_self");
-     }else  if(status != ""){
-      window.open(`{{url('coupon/couponlist')}}?status=${status}`, "_self");
-     }else  if(store != ""){
-      window.open(`{{url('coupon/couponlist')}}?store=${store}`, "_self");
-     }else if(area != ""){
-      window.open(`{{url('coupon/couponlist')}}?area=${area}`, "_self");
-     }else{
-          window.open("{{url('coupon/couponlist')}}" , "_self");
-     }
+      urlParams = filterArray.join('&');
+
+      window.open("{{url('coupon/couponlist?')}}" + urlParams , "_self");
 
   });
 
@@ -380,18 +298,37 @@ function confirmDelete(id){
 
       e.preventDefault();
 
+      var filters = {
+          status: $('#filter_coupon :selected').val(),
+          area: $('#filter_coupon_area :selected').val(),
+          store: $('#filter_coupon_store :selected').val(),
+          scannedFrom: $('#scanned-from').val(),
+          scannedTo: $('#scanned-to').val()
+      }
+
+      var filterArray =[],urlParams = "";
+
+      Object.keys(filters).forEach(function(key) {
+          console.log(key, filters[key]);
+          filterArray.push(key +'=' + filters[key]);
+      });
+
+      urlParams = filterArray.join('&');
 
 
-         var from = $('.from').val();
-      var to = $('.to').val();
-      var area=$('#filter_coupon :selected').val();
 
 
-         window.open("{{url('ExportCoupon?filter=')}}"+area, "_self");
+         window.open("{{url('ExportCoupon?filter=')}}"+urlParams, "_self");
 
 
 
   });
+
+  $(function () {
+      $('#scanned-from, #scanned-to').datepicker({
+          dateFormat: 'yy-mm-dd',
+      })
+  })
 
 </script>
 

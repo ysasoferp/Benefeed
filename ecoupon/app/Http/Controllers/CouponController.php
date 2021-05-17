@@ -43,18 +43,29 @@ class CouponController extends Controller
         $status = $request->status;
         $storeId = $request->store;
         $locationId = $request->area;
+        $scannedFrom = $request->scannedFrom;
+        $scannedTo = $request->scannedTo;
         $coupon = Coupon::with(['customer.location','customer.store'])
             ->when(isset($status) && $request->status !== "all", function($q) use ($status) {
                 $q->where( 'status', $status);
             })->when(($storeId || $locationId), function($q) use ($storeId, $locationId){
                 $q->whereHas('customer',function($qr) use ($storeId, $locationId) {
                     if($storeId) {
-                        $qr->where('store_id',$storeId);
+                        $qr->whereHas( 'store', function($qr2) use($storeId) {
+                            $qr2->where('id',$storeId);
+                        });
                     }
                     if($locationId) {
-                        $qr->where('location_id',$locationId);
+                        $qr->whereHas( 'location', function($qr2) use($locationId) {
+                            $qr2->where('id',$locationId);
+                        });
+
                     }
                 });
+            })->when($scannedFrom, function ($q) use($scannedFrom) {
+                $q->where('redeem','>=', $scannedFrom);
+            })->when($scannedTo, function ($q) use($scannedTo) {
+                $q->where('redeem','<=', $scannedTo);
             })->paginate(15);
 
         return view('couponlist', compact('coupon', 'storeName', 'areas', 'page'));
@@ -85,13 +96,8 @@ class CouponController extends Controller
 
      function ExportCoupon(Request $request)
     {
-        $type = null;
 
-        if(isset($request->filter)){
-            $type = $request->filter;
-        }
-
-        return Excel::download(new CouponExport($type), 'coupon.xls');
+        return Excel::download(new CouponExport($request), 'coupon.xls');
 
     }
 

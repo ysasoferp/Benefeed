@@ -12,10 +12,10 @@ class Customer extends Model
 
     public function location()
     {
-        return $this->belongsTo('App\Location');
+        return $this->belongsTo('App\Location')->withDefault();
     }
     public function store()
     {
-        return $this->belongsTo('App\Store');
+        return $this->belongsTo('App\Store')->withDefault();
     }
 }
