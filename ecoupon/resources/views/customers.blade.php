@@ -64,7 +64,8 @@
 
                                     <label for="status">Status</label>
                                     <select name="status" class="form-control mr-3" id="status"  style="width:250px;">
-                                        <option value="" {{ $status =="" ?"selected" : "" }}>All</option>
+                                        <option value="" {{ is_null($status) ?"selected" : "" }}>All</option>
+                                        <option value="0" {{ ($status ===0 || $status ==="0") ?"selected" : "" }}>New Customer</option>
                                         <option value="1" {{ $status ==1 ?"selected" : "" }}>Approved</option>
                                         <option value="3" {{ $status ==3 ?"selected" : "" }}>Disapproved</option>
                                         <option value="4" {{ $status ==4 ?"selected" : "" }}>Lock Profile</option>
@@ -313,7 +314,7 @@
 
             var area = $('#filter_area :selected').val();
             var status = $('#status :selected').val();
-            if (area != "" || status != "") {
+            if (area != "" || (status !== "" && status !==null)) {
                 window.open("{{url('customers?filter=')}}" + area +"&status="+status, "_self");
             } else {
 
