@@ -48,7 +48,7 @@ class CouponExport  implements FromCollection,WithHeadings, WithMapping
                 $q->where('redeem','>=', $this->scannedFrom);
             })->when($this->scannedTo, function ($q) {
                 $q->where('redeem','<=', $this->scannedTo);
-            })->orderby("id", "desc")->limit(500)->get();
+            })->orderby("id", "desc")->get();
 
         return $coupon;
     }
