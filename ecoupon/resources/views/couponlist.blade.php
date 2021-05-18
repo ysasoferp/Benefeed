@@ -318,7 +318,7 @@ function confirmDelete(id){
 
 
 
-         window.open("{{url('ExportCoupon?filter=')}}"+urlParams, "_self");
+         window.open("{{url('ExportCoupon?')}}"+urlParams, "_self");
 
 
 
