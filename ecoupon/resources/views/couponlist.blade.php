@@ -220,7 +220,7 @@
                 </tbody>
               </table>
                 @if($coupon->count() > 0)
-                    {{   $coupon->appends(Request::only(['status','store','area']))->links()}}
+                    {{   $coupon->appends(Request::only(['status','store','area','scannedFrom','scannedTo']))->links()}}
                 @endif
             </div>
             <!-- /.card-body -->
