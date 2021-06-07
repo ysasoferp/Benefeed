@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Coupon extends Model
 {
-   protected $fillable = [
+    protected $fillable = [
         'id', 'coupon_code', 'amount', 'expire', 'status', 'redeem',
     ];
 
-     public function customer()
+    public function customer()
     {
-    return  $this->belongsTo('App\Customer')->with('location','store')->withDefault();
+        return $this->belongsTo('App\Customer')->with('location', 'store')->withDefault();
     }
 
 }

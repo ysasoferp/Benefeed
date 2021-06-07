@@ -25,6 +25,7 @@ Auth::routes();
 Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/coupon-scanned-chart-data', 'HomeController@getDataForGraphTotalCouponScanned');
 
     Route::get('coupon/import', 'CouponController@importCoupon')->name('importCoupon');
     Route::post('coupon/import', 'CouponController@importCouponStore')->name('importCouponStore');
