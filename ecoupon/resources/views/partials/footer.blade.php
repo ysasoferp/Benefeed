@@ -1,8 +1,8 @@
 <!-- /.content-wrapper -->
   <footer class="main-footer">
-   
+
    <span>{{@$page->footer}}</span>
-    
+
   </footer>
 
 <!-- jQuery -->
@@ -39,5 +39,6 @@
 <script src="{{asset('js/demo.js')}}"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 <script src="{{asset('js/pages/dashboard.js')}}"></script>
+@stack('js')
 </body>
 </html>
